@@ -663,6 +663,10 @@ LABEL="not_RIM"
 
 # Samsung
 ATTR{idVendor}!="04e8", GOTO="not_Samsung"
+#   Odin (AKA download) mode - used instead of fastboot on Samsung devices
+#     Heimdall has two more IDs that it looks for. Still, we'd rather have a bit more information before adding them.
+#     See: <https://github.com/Benjamin-Dobell/Heimdall/blob/3997d5cc607e6c603c6e7c0d07e42e9868c62af2/heimdall/source/BridgeManager.h#L74>
+ATTR{idProduct}=="685d", GOTO="odin" # seems to be universally used for this purpose
 #   False positive printer
 ATTR{idProduct}=="3???", GOTO="android_usb_rules_end"
 #   Galaxy i5700
@@ -675,7 +679,7 @@ ATTR{idProduct}=="68a9", SYMLINK+="libmtp-%k", ENV{ID_MTP_DEVICE}="1", ENV{ID_ME
 ATTR{idProduct}=="6640", GOTO="adbfast"
 #   Galaxy i9000 S, i9300 S3
 ATTR{idProduct}=="6601", SYMLINK+="android_adb"
-ATTR{idProduct}=="685d", MODE="0660"
+#ATTR{idProduct}=="685d", MODE="0660"
 ATTR{idProduct}=="68c3", MODE="0660"
 #   Galaxy Ace (S5830) "Cooper"
 ATTR{idProduct}=="689e", GOTO="adbfast"
@@ -690,7 +694,7 @@ ATTR{idProduct}=="685e", GOTO="adbfast"
 #   Galaxy i9300 S3
 ATTR{idProduct}=="6866", SYMLINK+="libmtp-%k", ENV{ID_MTP_DEVICE}="1", ENV{ID_MEDIA_PLAYER}="1"
 #   Galaxy S4 GT-I9500
-ATTR{idProduct}=="685d", SYMLINK+="android_adb"
+#ATTR{idProduct}=="685d", SYMLINK+="android_adb"
 ENV{adb_user}="yes"
 GOTO="android_usb_rule_match"
 LABEL="not_Samsung"
@@ -965,6 +969,9 @@ LABEL="ptp", ENV{adb_ptp}="yes", GOTO="android_usb_rule_match"
 # ADB Debug and Tether mode
 LABEL="adbrndis", ENV{adb_adb}="yes"
 LABEL="rndis", ENV{adb_user}="yes", GOTO="android_usb_rule_match"
+
+# Odin (Samsung-specific flashing protocol)
+LABEL="odin", ENV{adb_user}="yes", GOTO="android_usb_rule_match"
 
 # Add "android" SYMLINK
 LABEL="user", ENV{adb_user}="yes"
